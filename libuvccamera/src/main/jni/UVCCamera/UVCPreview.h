@@ -48,9 +48,10 @@ typedef uvc_error_t (*convFunc_t)(uvc_frame_t *in, uvc_frame_t *out);
 #define PIXEL_FORMAT_YUV20SP 4
 #define PIXEL_FORMAT_NV21 5		// YVU420SemiPlanar
 
+#define __UVC_PASS_VERIFY__ 1
 // for callback to Java object
 typedef struct {
-	jmethodID onFrame;
+	jmethodID onVerifyFrame;
 } Fields_iframecallback;
 
 class UVCPreview {
@@ -72,6 +73,7 @@ private:
 	size_t previewBytes;
 //
 	volatile bool mIsCapturing;
+	volatile bool mHasCaptureThread;
 	ANativeWindow *mCaptureWindow;
 	pthread_t capture_thread;
 	pthread_mutex_t capture_mutex;
@@ -81,6 +83,7 @@ private:
 	convFunc_t mFrameCallbackFunc;
 	Fields_iframecallback iframecallback_fields;
 	int mPixelFormat;
+	bool mIsNeedFrameCallback;
 	size_t callbackPixelBytes;
 // improve performance by reducing memory allocation
 	pthread_mutex_t pool_mutex;
@@ -116,7 +119,7 @@ public:
 	inline const bool isRunning() const;
 	int setPreviewSize(int width, int height, int min_fps, int max_fps, int mode, float bandwidth = 1.0f);
 	int setPreviewDisplay(ANativeWindow *preview_window);
-	int setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pixel_format);
+	int setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pixel_format, bool isNeedFrameCallback);
 	int startPreview();
 	int stopPreview();
 	inline const bool isCapturing() const;

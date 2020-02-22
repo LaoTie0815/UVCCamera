@@ -22,7 +22,8 @@
   ~  may have a different license, see the respective files.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.serenegiant.usbcameratest6" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.serenegiant.usbcameratest6">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -33,7 +34,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:ignore="GoogleAppIndexingWarning" >
         <activity
             android:name="com.serenegiant.usbcameratest6.MainActivity"
             android:label="@string/app_name"

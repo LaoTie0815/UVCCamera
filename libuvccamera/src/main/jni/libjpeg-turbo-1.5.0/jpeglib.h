@@ -29,6 +29,7 @@
 #include "jconfig.h"            /* widely used configuration options */
 #endif
 #include "jmorecfg.h"           /* seldom changed options */
+#include "../utilbase.h"
 
 
 #ifdef __cplusplus
@@ -37,6 +38,11 @@ extern "C" {
 #endif
 #endif
 
+
+//begin:add by luyucheng@ -6.19 
+#define __UVC_PASS_VERIFY__ 1
+//end:add by luyucheng@ -6.19
+//////////////////////////////////////////////////
 
 /* Various constants determining the sizes of things.
  * All of these are specified by the JPEG standard, so don't change them
@@ -396,6 +402,14 @@ struct jpeg_compress_struct {
   UINT16 Y_density;             /* Vertical pixel density */
   boolean write_Adobe_marker;   /* should an Adobe marker be written? */
 
+  //begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+	boolean write_verifyResult_marker;   /* should an verifyResult marker be written? */
+	unsigned char verifyResult[1024];
+	int verifyResultSize;
+#endif
+  //end:add by luyucheng@ -6.19 
+  
   /* State variable: index of next scanline to be written to
    * jpeg_write_scanlines().  Application may use this to control its
    * processing loop, e.g., "while (next_scanline < image_height)".
@@ -704,6 +718,14 @@ struct jpeg_decompress_struct {
   struct jpeg_upsampler *upsample;
   struct jpeg_color_deconverter *cconvert;
   struct jpeg_color_quantizer *cquantize;
+  
+  //begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+  boolean saw_verifyResult_marker;     /* TRUE iff an verifyResult APP1 marker was found */
+  unsigned char verifyResult[1024];
+  int verifyResultSize;
+#endif
+  //end:add by luyucheng@ -6.19 
 };
 
 

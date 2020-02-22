@@ -33,6 +33,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.usb.UsbDevice;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,9 +43,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Spinner;
-
-import com.serenegiant.usb.DeviceFilter;
-import com.serenegiant.usb.USBMonitor;
 
 import com.serenegiant.uvccamera.R;
 
@@ -231,8 +229,14 @@ public class CameraDialog extends DialogFragment {
 			}
 			if (convertView instanceof CheckedTextView) {
 				final UsbDevice device = getItem(position);
-				((CheckedTextView)convertView).setText(
-					String.format("UVC Camera:(%x:%x:%s)", device.getVendorId(), device.getProductId(), device.getDeviceName()));
+				String showMsg = null;
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+					showMsg = String.format("%s:(%x:%x:%s)", device.getProductName(),device.getVendorId(), device.getProductId(), device.getDeviceName());
+				} else {
+					showMsg = String.format("(%x:%x:%s)",device.getVendorId(), device.getProductId(), device.getDeviceName());
+				}
+				((CheckedTextView)convertView).setText(showMsg);
+
 			}
 			return convertView;
 		}

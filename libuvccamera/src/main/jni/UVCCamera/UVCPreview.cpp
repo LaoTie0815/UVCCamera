@@ -42,7 +42,7 @@
 #include "libuvc_internal.h"
 
 #define	LOCAL_DEBUG 0
-#define MAX_FRAME 4
+#define MAX_FRAME 4    //todo 可以减少预览延迟
 #define PREVIEW_PIXEL_BYTES 4	// RGBA/RGBX
 #define FRAME_POOL_SZ MAX_FRAME + 2
 
@@ -206,7 +206,7 @@ int UVCPreview::setPreviewDisplay(ANativeWindow *preview_window) {
 	RETURN(0, int);
 }
 
-int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pixel_format) {
+int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pixel_format, bool isNeedFrameCallback) {
 	
 	ENTER();
 	pthread_mutex_lock(&capture_mutex);
@@ -219,7 +219,7 @@ int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pi
 			}
 		}
 		if (!env->IsSameObject(mFrameCallbackObj, frame_callback_obj))	{
-			iframecallback_fields.onFrame = NULL;
+			iframecallback_fields.onVerifyFrame = NULL;
 			if (mFrameCallbackObj) {
 				env->DeleteGlobalRef(mFrameCallbackObj);
 			}
@@ -228,14 +228,14 @@ int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pi
 				// get method IDs of Java object for callback
 				jclass clazz = env->GetObjectClass(frame_callback_obj);
 				if (LIKELY(clazz)) {
-					iframecallback_fields.onFrame = env->GetMethodID(clazz,
-						"onFrame",	"(Ljava/nio/ByteBuffer;)V");
+					iframecallback_fields.onVerifyFrame = env->GetMethodID(clazz,
+						"onVerifyFrame",	"(Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)V");
 				} else {
 					LOGW("failed to get object class");
 				}
 				env->ExceptionClear();
-				if (!iframecallback_fields.onFrame) {
-					LOGE("Can't find IFrameCallback#onFrame");
+				if (!iframecallback_fields.onVerifyFrame) {
+					LOGE("Can't find IFrameCallback# onVerifyFrame");
 					env->DeleteGlobalRef(frame_callback_obj);
 					mFrameCallbackObj = frame_callback_obj = NULL;
 				}
@@ -243,6 +243,7 @@ int UVCPreview::setFrameCallback(JNIEnv *env, jobject frame_callback_obj, int pi
 		}
 		if (frame_callback_obj) {
 			mPixelFormat = pixel_format;
+			mIsNeedFrameCallback = isNeedFrameCallback;
 			callbackPixelFormatChanged();
 		}
 	}
@@ -279,7 +280,7 @@ void UVCPreview::callbackPixelFormatChanged() {
 		break;
 	  case PIXEL_FORMAT_NV21:
 		LOGI("PIXEL_FORMAT_NV21:");
-		mFrameCallbackFunc = uvc_yuyv2yuv420SP;
+		mFrameCallbackFunc = uvc_yuyv2iyuv420SP;//uvc_yuyv2yuv420SP;
 		callbackPixelBytes = (sz * 3) / 2;
 		break;
 	}
@@ -357,7 +358,16 @@ int UVCPreview::stopPreview() {
 	if (LIKELY(b)) {
 		mIsRunning = false;
 		pthread_cond_signal(&preview_sync);
-		pthread_cond_signal(&capture_sync);
+		//begin
+		// Crash issue by ChenYang 2019/11/18
+		if(mHasCaptureThread){
+			pthread_cond_signal(&capture_sync);
+			if(pthread_join(capture_thread,nullptr) != EXIT_SUCCESS){
+				LOGW("UVCPreview::terminate capture thread: pthread_join failed");
+			}
+		}
+		//end
+
 		if (pthread_join(capture_thread, NULL) != EXIT_SUCCESS) {
 			LOGW("UVCPreview::terminate capture thread: pthread_join failed");
 		}
@@ -516,10 +526,15 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 	uvc_frame_t *frame_mjpeg = NULL;
 	uvc_error_t result = uvc_start_streaming_bandwidth(
 		mDeviceHandle, ctrl, uvc_preview_frame_callback, (void *)this, requestBandwidth, 0);
-
+	mHasCaptureThread = false;
 	if (LIKELY(!result)) {
 		clearPreviewFrame();
-		pthread_create(&capture_thread, NULL, capture_thread_func, (void *)this);
+		//begin
+		//prevent deadlock by ChenYang 2019/11/18
+		if(pthread_create(&capture_thread, NULL, capture_thread_func, (void *)this) == 0){
+			mHasCaptureThread = true;
+		}
+		//end
 
 #if LOCAL_DEBUG
 		LOGI("Streaming...");
@@ -530,14 +545,27 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 				frame_mjpeg = waitPreviewFrame();
 				if (LIKELY(frame_mjpeg)) {
 					frame = get_frame(frame_mjpeg->width * frame_mjpeg->height * 2);
-					result = uvc_mjpeg2yuyv(frame_mjpeg, frame);   // MJPEG => yuyv
+
+					//TODO liuyi
+//                    int tempW = frame_mjpeg->width;
+//                    frame_mjpeg->width = frame_mjpeg->height;
+//                    frame_mjpeg->height = tempW;
+//					LOGE("the frame_mjpeg: %x,the frame: %x",frame_mjpeg,frame);
+					result = uvc_mjpeg2yuyv(frame_mjpeg, frame);   // MJPEG => yuyv  keeper avg: 52ms
+//					result = uvc_mjpeg2rgbx(frame_mjpeg,frame);
 					recycle_frame(frame_mjpeg);
+//					LOGE("the mjpeg2yuyv result: %d",result);
 					if (LIKELY(!result)) {
-						frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
+						frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4); //keeper uvc_any2rgbx(YUYV to RGB) avg: 52ms
 						addCaptureFrame(frame);
 					} else {
 						recycle_frame(frame);
+						LOGE("uvc_mjpeg2yuyv error,ret = %d",result);
 					}
+                    //keeper actual_bytes = 46808, data_bytes = 46864, library_owns_data = 1
+                    //hisi   actual_bytes = 129440, data_bytes = 134782, library_owns_data = 1
+				} else {
+                    LOGE("waitPreviewFrame error");
 				}
 			}
 		} else {
@@ -547,6 +575,17 @@ void UVCPreview::do_preview(uvc_stream_ctrl_t *ctrl) {
 				if (LIKELY(frame)) {
 					frame = draw_preview_one(frame, &mPreviewWindow, uvc_any2rgbx, 4);
 					addCaptureFrame(frame);
+
+					//todo liuyi fix 直接回调，不走capture_thread
+//                    JavaVM *vm = getVM();
+//                    JNIEnv *env;
+//                    vm->AttachCurrentThread(&env, NULL);
+//                    jobject buf = env->NewDirectByteBuffer(frame->verifyResult, frame->verifyResultSize);
+//                    env->CallVoidMethod(mFrameCallbackObj, iframecallback_fields.onVerifyFrame, buf);
+//                    env->ExceptionClear();
+//                    env->DeleteLocalRef(buf);
+//                    vm->DetachCurrentThread();
+//                    recycle_frame(frame);
 				}
 			}
 		}
@@ -616,9 +655,11 @@ int copyToSurface(uvc_frame_t *frame, ANativeWindow **window) {
 			ANativeWindow_unlockAndPost(*window);
 		} else {
 			result = -1;
+			LOGI("liuyi ANativeWindow_lock error");
 		}
 	} else {
 		result = -1;
+        LOGI("liuyi ANativeWindow error");
 	}
 	return result; //RETURN(result, int);
 }
@@ -644,7 +685,7 @@ uvc_frame_t *UVCPreview::draw_preview_one(uvc_frame_t *frame, ANativeWindow **wi
 					copyToSurface(converted, window);
 					pthread_mutex_unlock(&preview_mutex);
 				} else {
-					LOGE("failed converting");
+                    LOGE("failed converting");
 				}
 				recycle_frame(converted);
 			}
@@ -707,6 +748,11 @@ void UVCPreview::addCaptureFrame(uvc_frame_t *frame) {
 		}
 		captureQueu = frame;
 		pthread_cond_broadcast(&capture_sync);
+		//begin
+        //sovle native leak   by ChenYang 2019/11/18
+	}else{
+	    recycle_frame(frame);
+	    //end
 	}
 	pthread_mutex_unlock(&capture_mutex);
 }
@@ -849,25 +895,37 @@ void UVCPreview::do_capture_callback(JNIEnv *env, uvc_frame_t *frame) {
 	if (LIKELY(frame)) {
 		uvc_frame_t *callback_frame = frame;
 		if (mFrameCallbackObj) {
-			if (mFrameCallbackFunc) {
-				callback_frame = get_frame(callbackPixelBytes);
-				if (LIKELY(callback_frame)) {
-					int b = mFrameCallbackFunc(frame, callback_frame);
-					recycle_frame(frame);
-					if (UNLIKELY(b)) {
-						LOGW("failed to convert for callback frame");
+
+//todo liuyi 是否要实时回调帧数据 这块比较消耗性能
+//====================================================================================================
+            jobject frameBuffer = NULL;
+			if(mIsNeedFrameCallback) {
+				if (mFrameCallbackFunc) {
+					callback_frame = get_frame(callbackPixelBytes);
+					if (LIKELY(callback_frame)) {
+						int b = mFrameCallbackFunc(frame, callback_frame);
+						recycle_frame(frame);
+						if (UNLIKELY(b)) {
+							LOGW("failed to convert for callback frame");
+							goto SKIP;
+						}
+					} else {
+						LOGW("failed to allocate for callback frame");
+						callback_frame = frame;
 						goto SKIP;
 					}
-				} else {
-					LOGW("failed to allocate for callback frame");
-					callback_frame = frame;
-					goto SKIP;
 				}
+				frameBuffer = env->NewDirectByteBuffer(callback_frame->data, callbackPixelBytes);
 			}
-			jobject buf = env->NewDirectByteBuffer(callback_frame->data, callbackPixelBytes);
-			env->CallVoidMethod(mFrameCallbackObj, iframecallback_fields.onFrame, buf);
+//====================================================================================================
+
+			jobject verifyResultBuffer = env->NewDirectByteBuffer(callback_frame->verifyResult, callback_frame->verifyResultSize);
+			env->CallVoidMethod(mFrameCallbackObj, iframecallback_fields.onVerifyFrame, frameBuffer, verifyResultBuffer);
 			env->ExceptionClear();
-			env->DeleteLocalRef(buf);
+			if(frameBuffer != NULL) {
+                env->DeleteLocalRef(frameBuffer);
+			}
+			env->DeleteLocalRef(verifyResultBuffer);
 		}
  SKIP:
 		recycle_frame(callback_frame);

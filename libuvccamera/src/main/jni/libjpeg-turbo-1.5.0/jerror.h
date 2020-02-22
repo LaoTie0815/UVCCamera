@@ -143,6 +143,12 @@ JMESSAGE(JTRC_ADOBE,
          "Adobe APP14 marker: version %d, flags 0x%04x 0x%04x, transform %d")
 JMESSAGE(JTRC_APP0, "Unknown APP0 marker (not JFIF), length %u")
 JMESSAGE(JTRC_APP14, "Unknown APP14 marker (not Adobe), length %u")
+//begin:add by luyucheng@ -6.19 
+#if 1//__UVC_PASS_VERIFY__
+JMESSAGE(JTRC_APP1,
+		 "Adobe APP1 marker: version %d, flags 0x%04x 0x%04x, verifyResult %s")
+#endif		 
+//end:add by luyucheng@ -6.19 
 JMESSAGE(JTRC_DAC, "Define Arithmetic Table 0x%02x: 0x%02x")
 JMESSAGE(JTRC_DHT, "Define Huffman Table 0x%02x")
 JMESSAGE(JTRC_DQT, "Define Quantization Table %d  precision %d")

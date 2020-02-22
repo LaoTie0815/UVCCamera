@@ -18,6 +18,7 @@
 #include "jpegcomp.h"
 
 
+
 typedef enum {                  /* JPEG marker codes */
   M_SOF0  = 0xc0,
   M_SOF1  = 0xc1,
@@ -430,6 +431,45 @@ emit_adobe_app14 (j_compress_ptr cinfo)
   }
 }
 
+//begin:add by luyucheng@ -6.19 
+#if 0//__UVC_PASS_VERIFY__
+LOCAL(void)
+emit_verifyResult_app15(j_compress_ptr cinfo)
+/* Emit an verifyResult APP15 marker */
+{
+  /*
+   * Length of APP1 block      (2 bytes)
+   * Block ID                   (6 bytes - ASCII "verify")
+   * Version Number             (2 bytes - currently 100)
+   * Flags0                     (2 bytes - currently 0)
+   * Flags1                     (2 bytes - currently 0)
+   * verifyResult				(2 bytes - currently 0)
+   *
+   * Although Adobe TN 5116 mentions Version = 101, all the Adobe files
+   * now in circulation seem to use Version = 100, so that's what we write.
+   *
+   * We write the color transform byte as 1 if the JPEG color space is
+   * YCbCr, 2 if it's YCCK, 0 otherwise.  Adobe's definition has to do with
+   * whether the encoder performed a transformation, which is pretty useless.
+   */
+
+  emit_marker(cinfo, M_APP15);
+
+  emit_2bytes(cinfo, 2 + 6 + 2 + 2 + 2 + 2); /* length */
+
+  emit_byte(cinfo, 0x76);//118 v       /* Identifier: ASCII "verify" */
+  emit_byte(cinfo, 0x65);//101 e
+  emit_byte(cinfo, 0x72);//114 r
+  emit_byte(cinfo, 0x69);//105 i
+  emit_byte(cinfo, 0x66);//102 f
+  emit_byte(cinfo, 0x79);//121 y
+  emit_2bytes(cinfo, 100);      /* Version */
+  emit_2bytes(cinfo, 0);        /* Flags0 */
+  emit_2bytes(cinfo, 0);        /* Flags1 */
+  emit_2bytes(cinfo, (int) cinfo->verifyResult);	/*verifyResult*/
+}
+//end:add by luyucheng@ -6.19 
+#endif
 
 /*
  * These routines allow writing an arbitrary marker with parameters.
@@ -474,7 +514,8 @@ METHODDEF(void)
 write_file_header (j_compress_ptr cinfo)
 {
   my_marker_ptr marker = (my_marker_ptr) cinfo->marker;
-
+  LOGD("#111_1 before emit_marker");
+  
   emit_marker(cinfo, M_SOI);    /* first the SOI */
 
   /* SOI is defined to reset restart interval to 0 */
@@ -484,6 +525,13 @@ write_file_header (j_compress_ptr cinfo)
     emit_jfif_app0(cinfo);
   if (cinfo->write_Adobe_marker) /* next an optional Adobe APP14 */
     emit_adobe_app14(cinfo);
+  
+  //begin:add by luyucheng@ -6.19 
+#if 0//__UVC_PASS_VERIFY__
+  if (cinfo->write_verifyResult_marker) /* next an optional verifyResult APP1 */
+    emit_verifyResult_app15(cinfo);
+#endif 
+  //end:add by luyucheng@ -6.19 
 }
 
 

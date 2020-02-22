@@ -34,12 +34,12 @@ android {
 
 	defaultConfig {
 		applicationId "com.serenegiant.usbcameratest8"
-		minSdkVersion 18
+		minSdkVersion minVersion
 		targetSdkVersion versionTarget
 		versionCode 1
 		versionName "1.0"
 
-		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
 	}
 	buildTypes {
@@ -53,17 +53,17 @@ android {
 dependencies {
 	api fileTree(dir: 'libs', include: ['*.jar'])
 
-	implementation "com.android.support:support-v4:${supportLibVersion}"
-	implementation "com.android.support:support-annotations:${supportLibVersion}"
+	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+	implementation 'androidx.annotation:annotation:1.1.0'
 
-	androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+	androidTestImplementation('androidx.test.espresso:espresso-core:3.1.1', {
 		exclude group: 'com.android.support', module: 'support-annotations'
 	})
-	testImplementation 'junit:junit:4.12'
+	testImplementation 'junit:junit:4.13'
 
 	implementation("com.serenegiant:common:${commonLibVersion}") {
 		exclude module: 'support-v4'
 	}
-	implementation project(':libuvccamera')
-	implementation project(':usbCameraCommon')
+    implementation project(':usbCameraCommon')
+    implementation project(path: ':libuvccamera')
 }

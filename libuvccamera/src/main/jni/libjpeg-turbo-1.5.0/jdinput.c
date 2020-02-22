@@ -21,6 +21,7 @@
 #include "jpegcomp.h"
 
 
+
 /* Private state */
 
 typedef struct {
@@ -313,11 +314,17 @@ consume_markers (j_decompress_ptr cinfo)
 {
   my_inputctl_ptr inputctl = (my_inputctl_ptr) cinfo->inputctl;
   int val;
-
+  
+  LOGD("#111_1 enter consume_markers");
   if (inputctl->pub.eoi_reached) /* After hitting EOI, read no further */
     return JPEG_REACHED_EOI;
-
+  
+  LOGD("#111_1 before read_markers");
   val = (*cinfo->marker->read_markers) (cinfo);
+  LOGD("#111_1 after read_markers output_width=%d",cinfo->output_width);
+  LOGD("#111_1 after read_markers output_height=%d",cinfo->output_height);
+  LOGD("#111_1 after read_markers verifyResult=%s",cinfo->verifyResult);
+  LOGD("#111_1 after read_markers verifyResultSize=%d",cinfo->verifyResultSize);
 
   switch (val) {
   case JPEG_REACHED_SOS:        /* Found SOS */

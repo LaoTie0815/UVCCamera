@@ -800,7 +800,7 @@ uvc_error_t uvc_uyvy2rgb(uvc_frame_t *in, uvc_frame_t *out) {
 		}
 	}
 #else
-	for (; ((prgb <= prgb_end) && (pyuv <= pyuv_end) ;) {
+	for (; (prgb <= prgb_end) && (pyuv <= pyuv_end) ;) {
 		IUYVY2RGB_8(pyuv, prgb, 0, 0);
 
 		prgb += PIXEL8_RGB;

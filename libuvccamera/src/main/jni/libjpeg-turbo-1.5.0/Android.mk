@@ -50,6 +50,9 @@ LOCAL_CFLAGS += -DANDROID_NDK
 #リンクするライブラリを指定(静的モジュールにする時は不要)
 #LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -ldl	# to avoid NDK issue(no need for static library)
 
+#LOCAL_LDLIBS += -llog
+LOCAL_EXPORT_LDLIBS += -llog
+
 #このモジュールを外部モジュールとしてリンクする時のライブラリを指定
 
 LOCAL_ARM_MODE := arm

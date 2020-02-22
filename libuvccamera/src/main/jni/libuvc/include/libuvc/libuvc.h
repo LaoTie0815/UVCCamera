@@ -9,6 +9,8 @@ extern "C" {
 #include <libusb/libusb.h>
 #include <libuvc/libuvc_config.h>
 
+#define __UVC_PASS_VERIFY__ 1
+
 /** UVC error types, based on libusb errors
  * @ingroup diag
  */
@@ -482,6 +484,13 @@ typedef struct uvc_frame {
 	 * Set this field to zero if you are supplying the buffer.
 	 */
 	uint8_t library_owns_data;
+	//begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+	uint8_t is_verifyResult_marker_ok;
+	unsigned char verifyResult[1024];
+	int verifyResultSize;
+#endif
+	//end:add by luyucheng@ -6.19 
 } uvc_frame_t;
 
 /** A callback function to handle incoming assembled UVC frames
@@ -566,6 +575,7 @@ const uvc_input_terminal_t *uvc_get_input_terminals(uvc_device_handle_t *devh);
 const uvc_output_terminal_t *uvc_get_output_terminals(uvc_device_handle_t *devh);
 const uvc_processing_unit_t *uvc_get_processing_units(uvc_device_handle_t *devh);
 const uvc_extension_unit_t *uvc_get_extension_units(uvc_device_handle_t *devh);
+const uvc_format_desc_t *uvc_get_format_descs(uvc_device_handle_t *devh);
 
 uvc_error_t uvc_get_stream_ctrl_format_size(uvc_device_handle_t *devh,
 		uvc_stream_ctrl_t *ctrl, enum uvc_frame_format format, int width,

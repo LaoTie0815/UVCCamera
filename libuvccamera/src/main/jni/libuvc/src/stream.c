@@ -457,8 +457,13 @@ static uvc_error_t _uvc_get_stream_ctrl_format(uvc_device_handle_t *devh,
 #endif
 	DL_FOREACH(format->frame_descs, frame)
 	{
-		if (frame->wWidth != width || frame->wHeight != height)
-			continue;
+//	    TODO liuyi fix
+//		if (frame->wWidth != width || frame->wHeight != height)
+//			continue;
+        if (frame->wWidth != width || frame->wHeight != height) {
+            frame->wWidth = width;
+            frame->wHeight = height;
+        }
 
 		uint32_t *interval;
 

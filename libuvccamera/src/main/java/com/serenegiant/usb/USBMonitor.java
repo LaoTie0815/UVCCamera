@@ -48,8 +48,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.serenegiant.utils.BuildCheck;
-import com.serenegiant.utils.HandlerThreadHandler;
+import com.serenegiant.usb.util.BuildCheck;
+import com.serenegiant.usb.util.HandlerThreadHandler;
 
 public final class USBMonitor {
 

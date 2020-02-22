@@ -44,6 +44,8 @@
 #include <jpeglib.h>
 #include <setjmp.h>
 
+
+
 extern uvc_error_t uvc_ensure_frame_size(uvc_frame_t *frame, size_t need_bytes);
 
 struct error_mgr {
@@ -443,6 +445,13 @@ uvc_error_t uvc_mjpeg2rgbx(uvc_frame_t *in, uvc_frame_t *out) {
 		}
 		out->actual_bytes = in->width * in->height * 4;	// XXX
 	}
+
+	//todo liuyi fix
+#if __UVC_PASS_VERIFY__
+	strcpy(out->verifyResult, dinfo.verifyResult);
+	out->verifyResultSize = dinfo.verifyResultSize;
+#endif
+
 	jpeg_finish_decompress(&dinfo);
 	jpeg_destroy_decompress(&dinfo);
 	return lines_read == out->height ? UVC_SUCCESS : UVC_ERROR_OTHER;	// XXX
@@ -497,8 +506,13 @@ uvc_error_t uvc_mjpeg2yuyv(uvc_frame_t *in, uvc_frame_t *out) {
 
 	jpeg_create_decompress(&dinfo);
 	jpeg_mem_src(&dinfo, in->data, in->actual_bytes/*in->data_bytes*/);	// XXX
+	LOGD("#111_1 before jpeg_read_header");
 	jpeg_read_header(&dinfo, TRUE);
-
+	LOGD("#111_1 after jpeg_read_header output_width=%d",dinfo.output_width);
+	LOGD("#111_1 after jpeg_read_header output_height=%d",dinfo.output_height);
+	LOGD("#111_1 after jpeg_read_header verifyResult=%s",dinfo.verifyResult);
+	LOGD("#111_1 after jpeg_read_header verifyResult=%d",dinfo.verifyResultSize);
+	
 	if (dinfo.dc_huff_tbl_ptrs[0] == NULL) {
 		/* This frame is missing the Huffman tables: fill in the standard ones */
 		insert_huff_tables(&dinfo);
@@ -508,8 +522,10 @@ uvc_error_t uvc_mjpeg2yuyv(uvc_frame_t *in, uvc_frame_t *out) {
 	dinfo.dct_method = JDCT_IFAST;
 
 	// start decompressor
+	LOGD("#111_1 before jpeg_start_decompress");
 	jpeg_start_decompress(&dinfo);
-
+	LOGD("#111_1 after jpeg_start_decompress");
+	
 	// these dinfo.xxx valiables are only valid after jpeg_start_decompress
 	const int row_stride = dinfo.output_width * dinfo.output_components;
 
@@ -540,9 +556,28 @@ uvc_error_t uvc_mjpeg2yuyv(uvc_frame_t *in, uvc_frame_t *out) {
 		}
 		out->actual_bytes = in->width * in->height * 2;	// XXX
 	}
+	//begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+	LOGD("#111_1 before callback verifyResult");
+	strcpy(out->verifyResult, dinfo.verifyResult);	
+	LOGD("#111_1 after callback verifyResult out->verifyResult=%s",out->verifyResult);
 
+	//begin: add by luyucheng@ -6.25
+	LOGD("#111_1 before callback verifyResultSize");
+	out->verifyResultSize = dinfo.verifyResultSize;
+	LOGD("#111_1 after callback verifyResultSize out->verifyResultSize=%d",out->verifyResultSize);
+	//end: add by luyucheng@ -6.25
+#endif
+	//end:add by luyucheng@ -6.19 
+
+	LOGD("#111_1 before jpeg_finish_decompress");
 	jpeg_finish_decompress(&dinfo);
+	LOGD("#111_1 after jpeg_finish_decompress");
+	
+	LOGD("#111_1 before jpeg_destroy_decompress");
 	jpeg_destroy_decompress(&dinfo);
+	LOGD("#111_1 after jpeg_destroy_decompress");
+	
 	return lines_read == out->height ? UVC_SUCCESS : UVC_ERROR_OTHER;
 
 fail:

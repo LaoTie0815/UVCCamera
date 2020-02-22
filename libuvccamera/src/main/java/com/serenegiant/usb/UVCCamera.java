@@ -44,8 +44,8 @@ public class UVCCamera {
 	private static final String TAG = UVCCamera.class.getSimpleName();
 	private static final String DEFAULT_USBFS = "/dev/bus/usb";
 
-	public static final int DEFAULT_PREVIEW_WIDTH = 640;
-	public static final int DEFAULT_PREVIEW_HEIGHT = 480;
+	public static final int DEFAULT_PREVIEW_WIDTH = 720;
+	public static final int DEFAULT_PREVIEW_HEIGHT = 1280;
 	public static final int DEFAULT_PREVIEW_MODE = 0;
 	public static final int DEFAULT_PREVIEW_MIN_FPS = 1;
 	public static final int DEFAULT_PREVIEW_MAX_FPS = 30;
@@ -405,9 +405,9 @@ public class UVCCamera {
      * @param callback
      * @param pixelFormat
      */
-    public void setFrameCallback(final IFrameCallback callback, final int pixelFormat) {
+    public void setFrameCallback(final IFrameCallback callback, final int pixelFormat, final boolean isNeedFrameCallback) {
     	if (mNativePtr != 0) {
-        	nativeSetFrameCallback(mNativePtr, callback, pixelFormat);
+        	nativeSetFrameCallback(mNativePtr, callback, pixelFormat, isNeedFrameCallback);
     	}
     }
 
@@ -424,7 +424,7 @@ public class UVCCamera {
      * stop preview
      */
     public synchronized void stopPreview() {
-    	setFrameCallback(null, 0);
+    	setFrameCallback(null, 0, false);
     	if (mCtrlBlock != null) {
     		nativeStopPreview(mNativePtr);
     	}
@@ -1043,7 +1043,7 @@ public class UVCCamera {
     private static final native int nativeStartPreview(final long id_camera);
     private static final native int nativeStopPreview(final long id_camera);
     private static final native int nativeSetPreviewDisplay(final long id_camera, final Surface surface);
-    private static final native int nativeSetFrameCallback(final long mNativePtr, final IFrameCallback callback, final int pixelFormat);
+    private static final native int nativeSetFrameCallback(final long mNativePtr, final IFrameCallback callback, final int pixelFormat, final boolean isNeedFrameCallback);
 
 //**********************************************************************
     /**

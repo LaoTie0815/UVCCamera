@@ -257,9 +257,14 @@ jpeg_read_header (j_decompress_ptr cinfo, boolean require_image)
   if (cinfo->global_state != DSTATE_START &&
       cinfo->global_state != DSTATE_INHEADER)
     ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
-
+  
+  LOGD("#111_1 before jpeg_consume_input");
   retcode = jpeg_consume_input(cinfo);
-
+  LOGD("#111_1 after jpeg_consume_input output_width=%d",cinfo->output_width);
+  LOGD("#111_1 after jpeg_consume_input output_height=%d",cinfo->output_height);
+  LOGD("#111_1 after jpeg_consume_input verifyResult=%s",cinfo->verifyResult);
+  LOGD("#111_1 after jpeg_consume_input verifyResultSize=%d",cinfo->verifyResultSize);
+  
   switch (retcode) {
   case JPEG_REACHED_SOS:
     retcode = JPEG_HEADER_OK;
@@ -310,7 +315,13 @@ jpeg_consume_input (j_decompress_ptr cinfo)
     cinfo->global_state = DSTATE_INHEADER;
     /*FALLTHROUGH*/
   case DSTATE_INHEADER:
-    retcode = (*cinfo->inputctl->consume_input) (cinfo);
+		LOGD("#111_1 before consume_input");
+		retcode = (*cinfo->inputctl->consume_input) (cinfo);
+		LOGD("#111_1 after consume_input output_width=%d",cinfo->output_width);
+		LOGD("#111_1 after consume_input output_height=%d",cinfo->output_height);
+		LOGD("#111_1 after consume_input verifyResult=%s",cinfo->verifyResult);
+		LOGD("#111_1 after consume_input verifyResultSize=%d",cinfo->verifyResultSize);
+		
     if (retcode == JPEG_REACHED_SOS) { /* Found SOS, prepare to decompress */
       /* Set up default parameters based on header data */
       default_decompress_parms(cinfo);

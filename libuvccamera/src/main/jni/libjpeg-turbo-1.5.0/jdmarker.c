@@ -20,6 +20,7 @@
 #include "jpeglib.h"
 
 
+
 typedef enum {                  /* JPEG marker codes */
   M_SOF0  = 0xc0,
   M_SOF1  = 0xc1,
@@ -594,8 +595,18 @@ get_dri (j_decompress_ptr cinfo)
 
 #define APP0_DATA_LEN   14      /* Length of interesting data in APP0 */
 #define APP14_DATA_LEN  12      /* Length of interesting data in APP14 */
-#define APPN_DATA_LEN   14      /* Must be the largest of the above!! */
 
+//begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+#define APP15_DATA_LEN  6     /* Length of interesting data in APP15 */
+#endif
+//end:add by luyucheng@ -6.19
+
+#if __UVC_PASS_VERIFY__
+#define APPN_DATA_LEN   1024      /* Must be the largest of the above!! */
+#else
+#define APPN_DATA_LEN   14      /* Must be the largest of the above!! */
+#endif
 
 LOCAL(void)
 examine_app0 (j_decompress_ptr cinfo, JOCTET *data,
@@ -606,7 +617,9 @@ examine_app0 (j_decompress_ptr cinfo, JOCTET *data,
  */
 {
   JLONG totallen = (JLONG) datalen + remaining;
-
+  
+  LOGD("#111_1 enter examine_app0 datalen=%d",datalen);
+  LOGD("#111_1 enter examine_app0 data=%s",data);
   if (datalen >= APP0_DATA_LEN &&
       GETJOCTET(data[0]) == 0x4A &&
       GETJOCTET(data[1]) == 0x46 &&
@@ -703,6 +716,54 @@ examine_app14 (j_decompress_ptr cinfo, JOCTET *data,
   }
 }
 
+//begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+/*
+	[model]"verify100117" 
+	verify--tag
+	100--version
+	1--flag,reserve
+	17--construct info
+*/
+LOCAL(void)
+examine_app15(j_decompress_ptr cinfo, JOCTET *data,
+               unsigned int datalen, JLONG remaining)
+/* Examine first few bytes from an APP1.
+ * Take appropriate action if it is an verifyResult marker.
+ * datalen is # of bytes at data[], remaining is length of rest of marker data.
+ */
+{
+  unsigned int version, flags0;
+  LOGD("#111_1 enter examine_app15 datalen=%d",datalen);
+  LOGD("#111_1 enter examine_app15 data=%s",data);
+  
+  /* Identifier: ASCII "verify" */
+  //mod by luyucheng@ -6.24 
+  //ignore the condition for "verify" field,
+  /*
+  if (datalen >= APP15_DATA_LEN &&
+      GETJOCTET(data[0]) == 0x76 &&
+      GETJOCTET(data[1]) == 0x65 &&
+      GETJOCTET(data[2]) == 0x72 &&
+      GETJOCTET(data[3]) == 0x69 &&
+      GETJOCTET(data[4]) == 0x66 &&
+      GETJOCTET(data[5]) == 0x79)
+  */    
+  if (datalen >= APP15_DATA_LEN) 
+ {
+	strcpy(cinfo->verifyResult, data);  
+	LOGD("#111_1 after examine_app15 after verifyResult=%s",cinfo->verifyResult);	
+	cinfo->verifyResultSize = datalen;
+	LOGD("#111_1 after examine_app15 after verifyResultSize=%d",cinfo->verifyResultSize);	
+	
+    cinfo->saw_verifyResult_marker = TRUE;
+  } else {
+    /* Start of APP1 does not match "verify", or too short */
+    TRACEMS1(cinfo, 1, JTRC_APP1, (int) (datalen + remaining));
+  }
+}
+#endif
+//end:add by luyucheng@ -6.19 
 
 METHODDEF(boolean)
 get_interesting_appn (j_decompress_ptr cinfo)
@@ -711,6 +772,8 @@ get_interesting_appn (j_decompress_ptr cinfo)
   JLONG length;
   JOCTET b[APPN_DATA_LEN];
   unsigned int i, numtoread;
+  LOGD("#111_1 enter get_interesting_appn");
+  
   INPUT_VARS(cinfo);
 
   INPUT_2BYTES(cinfo, length, return FALSE);
@@ -730,11 +793,29 @@ get_interesting_appn (j_decompress_ptr cinfo)
   /* process it */
   switch (cinfo->unread_marker) {
   case M_APP0:
+	LOGD("#111_1 before examine_app0");
     examine_app0(cinfo, (JOCTET *) b, numtoread, length);
+	LOGD("#111_1 after examine_app0");
     break;
   case M_APP14:
+  LOGD("#111_1 before examine_app14");
     examine_app14(cinfo, (JOCTET *) b, numtoread, length);
+	LOGD("#111_1 after examine_app14");
     break;
+	
+//begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+	case M_APP15:
+		LOGD("#111_1 before examine_app15");
+		examine_app15(cinfo, (JOCTET *) b, numtoread, length);
+		LOGD("#111_1 after examine_app15 output_width=%d",cinfo->output_width);
+		LOGD("#111_1 after examine_app15 output_height=%d",cinfo->output_height);
+		LOGD("#111_1 after examine_app15 verifyResult=%s",cinfo->verifyResult);
+		LOGD("#111_1 after examine_app15 verifyResultSize=%d",cinfo->verifyResultSize);
+	break;
+#endif
+	//end:add by luyucheng@ -6.19 
+	
   default:
     /* can't get here unless jpeg_save_markers chooses wrong processor */
     ERREXIT1(cinfo, JERR_UNKNOWN_MARKER, cinfo->unread_marker);
@@ -835,12 +916,26 @@ save_marker (j_decompress_ptr cinfo)
 
   /* Process the marker if interesting; else just make a generic trace msg */
   switch (cinfo->unread_marker) {
+  LOGD("#111_1 before examine_appn =%d",cinfo->unread_marker);
+
   case M_APP0:
+	LOGD("#111_1 before examine_app0");
     examine_app0(cinfo, data, data_length, length);
     break;
   case M_APP14:
+  LOGD("#111_1 before examine_app14");
     examine_app14(cinfo, data, data_length, length);
     break;
+	
+	//begin:add by luyucheng@ -6.19 
+#if 0//__UVC_PASS_VERIFY__
+	case M_APP15:
+		LOGD("#111_1 before examine_app15");
+	  examine_app15(cinfo, data, data_length, length);
+	  break;
+#endif	  
+	//end:add by luyucheng@ -6.19 
+
   default:
     TRACEMS2(cinfo, 1, JTRC_MISC_MARKER, cinfo->unread_marker,
              (int) (data_length + length));
@@ -968,6 +1063,8 @@ first_marker (j_decompress_ptr cinfo)
 METHODDEF(int)
 read_markers (j_decompress_ptr cinfo)
 {
+	LOGD("#111_1 enter read_markers");
+
   /* Outer loop repeats once for each marker. */
   for (;;) {
     /* Collect the marker proper, unless we already did. */
@@ -987,6 +1084,7 @@ read_markers (j_decompress_ptr cinfo)
      */
     switch (cinfo->unread_marker) {
     case M_SOI:
+		LOGD("#111_1 enter read_markers M_SOI");
       if (! get_soi(cinfo))
         return JPEG_SUSPENDED;
       break;
@@ -1026,6 +1124,7 @@ read_markers (j_decompress_ptr cinfo)
       break;
 
     case M_SOS:
+	LOGD("#111_1 enter read_markers M_SOS");
       if (! get_sos(cinfo))
         return JPEG_SUSPENDED;
       cinfo->unread_marker = 0; /* processed the marker */
@@ -1072,9 +1171,16 @@ read_markers (j_decompress_ptr cinfo)
     case M_APP13:
     case M_APP14:
     case M_APP15:
+		LOGD("#111_1  before process_APPn M_APPn=%d",cinfo->unread_marker);
       if (! (*((my_marker_ptr) cinfo->marker)->process_APPn[
                 cinfo->unread_marker - (int) M_APP0]) (cinfo))
-        return JPEG_SUSPENDED;
+      	{
+			LOGD("#111_1	after process_APPn output_width=%d",cinfo->output_width);
+			LOGD("#111_1	after process_APPn output_height=%d",cinfo->output_height);
+			LOGD("#111_1	after process_APPn verifyResult=%s",cinfo->verifyResult);
+			LOGD("#111_1	after process_APPn verifyResultSize=%d",cinfo->verifyResultSize);
+			return JPEG_SUSPENDED;
+    	}
       break;
 
     case M_COM:
@@ -1300,8 +1406,15 @@ jinit_marker_reader (j_decompress_ptr cinfo)
     marker->process_APPn[i] = skip_variable;
     marker->length_limit_APPn[i] = 0;
   }
+  
+  LOGD("#111_1 before set process_APPn");
   marker->process_APPn[0] = get_interesting_appn;
   marker->process_APPn[14] = get_interesting_appn;
+  //begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+	//M_APP15
+  marker->process_APPn[15] = get_interesting_appn;
+#endif
   /* Reset marker processing state */
   reset_marker_reader(cinfo);
 }
@@ -1333,16 +1446,37 @@ jpeg_save_markers (j_decompress_ptr cinfo, int marker_code,
    */
   if (length_limit) {
     processor = save_marker;
+	LOGD("#111_1 before marker_code=%d",(int)marker_code);
+	
     /* If saving APP0/APP14, save at least enough for our internal use. */
     if (marker_code == (int) M_APP0 && length_limit < APP0_DATA_LEN)
       length_limit = APP0_DATA_LEN;
     else if (marker_code == (int) M_APP14 && length_limit < APP14_DATA_LEN)
       length_limit = APP14_DATA_LEN;
+
+	//begin:add by luyucheng@ -6.19 
+#if 0//__UVC_PASS_VERIFY__
+    else if (marker_code == (int) M_APP15 && length_limit < APP15_DATA_LEN)
+      length_limit = APP15_DATA_LEN;
+#endif
+	//end:add by luyucheng@ -6.19 
+	
   } else {
     processor = skip_variable;
+	LOGD("#111_1 before marker_code=%d",(int)marker_code);
+	
     /* If discarding APP0/APP14, use our regular on-the-fly processor. */
     if (marker_code == (int) M_APP0 || marker_code == (int) M_APP14)
       processor = get_interesting_appn;
+
+	  //begin:add by luyucheng@ -6.19 
+	#if 0//__UVC_PASS_VERIFY__
+	  /* If discarding APP1, use our regular on-the-fly processor. */
+	  if (marker_code == (int) M_APP15)
+		processor = get_interesting_appn;
+	#endif 
+	  //end:add by luyucheng@ -6.19 
+
   }
 
   if (marker_code == (int) M_COM) {

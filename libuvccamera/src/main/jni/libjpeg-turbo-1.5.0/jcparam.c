@@ -346,7 +346,13 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
 
   cinfo->write_JFIF_header = FALSE; /* No marker for non-JFIF colorspaces */
   cinfo->write_Adobe_marker = FALSE; /* write no Adobe marker by default */
-
+  
+  //begin:add by luyucheng@ -6.19 
+#if __UVC_PASS_VERIFY__
+  cinfo->write_verifyResult_marker = TRUE; /* write verifyResult marker by default */
+#endif
+  //end:add by luyucheng@ -6.19 
+  
   switch (colorspace) {
   case JCS_GRAYSCALE:
     cinfo->write_JFIF_header = TRUE; /* Write a JFIF marker */
