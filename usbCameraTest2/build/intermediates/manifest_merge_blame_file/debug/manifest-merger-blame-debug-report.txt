@@ -1,0 +1,69 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3  ~  UVCCamera
+4  ~  library and sample to access to UVC web camera on non-rooted Android device
+5  ~
+6  ~ Copyright (c) 2014-2017 saki t_saki@serenegiant.com
+7  ~
+8  ~  Licensed under the Apache License, Version 2.0 (the "License");
+9  ~  you may not use this file except in compliance with the License.
+10  ~   You may obtain a copy of the License at
+11  ~
+12  ~      http://www.apache.org/licenses/LICENSE-2.0
+13  ~
+14  ~   Unless required by applicable law or agreed to in writing, software
+15  ~   distributed under the License is distributed on an "AS IS" BASIS,
+16  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+17  ~   See the License for the specific language governing permissions and
+18  ~   limitations under the License.
+19  ~
+20  ~  All files in the folder are under this Apache License, Version 2.0.
+21  ~  Files in the libjpeg-turbo, libusb, libuvc, rapidjson folder
+22  ~  may have a different license, see the respective files.
+23-->
+24<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+25    package="com.serenegiant.usbcameratest2"
+26    android:versionCode="8"
+27    android:versionName="3.00" >
+28
+29    <uses-sdk
+30        android:minSdkVersion="22"
+30-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml
+31        android:targetSdkVersion="29" />
+31-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml
+32
+33    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+33-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:28:5-80
+33-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:28:22-78
+34
+35    <application
+35-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:30:5-44:19
+36        android:allowBackup="true"
+36-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:31:9-35
+37        android:debuggable="true"
+38        android:icon="@drawable/ic_launcher"
+38-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:32:9-45
+39        android:label="@string/app_name"
+39-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:33:9-41
+40        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+40-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:34:9-65
+41        <activity
+41-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:36:9-43:20
+42            android:name="com.serenegiant.usbcameratest2.MainActivity"
+42-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:37:13-71
+43            android:label="@string/app_name" >
+43-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:38:13-45
+44            <intent-filter>
+44-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:39:13-42:29
+45                <action android:name="android.intent.action.MAIN" />
+45-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:40:17-69
+45-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:40:25-66
+46
+47                <category android:name="android.intent.category.LAUNCHER" />
+47-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:41:17-77
+47-->D:\LaoTie\project\LaoTie_github\LaoTie_UvcCamera\usbCameraTest2\src\main\AndroidManifest.xml:41:27-74
+48            </intent-filter>
+49        </activity>
+50    </application>
+51
+52</manifest>

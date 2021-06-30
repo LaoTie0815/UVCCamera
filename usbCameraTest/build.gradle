@@ -24,18 +24,17 @@
 apply plugin: 'com.android.application'
 
 android {
-	compileSdkVersion versionCompiler
-	buildToolsVersion versionBuildTool
+	compileSdkVersion rootProject.ext.android["compileSdkVersion"]
 
 	compileOptions {
-		sourceCompatibility javaSourceCompatibility
-		targetCompatibility javaTargetCompatibility
+		sourceCompatibility rootProject.ext.java["javaSourceCompatibility"]
+		targetCompatibility rootProject.ext.java["javaTargetCompatibility"]
 	}
 
     defaultConfig {
-        applicationId "com.serenegiant.usbcameratest"
-        minSdkVersion minVersion
-		targetSdkVersion versionTarget
+        applicationId "com.laotie.usbcameratest"
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+		targetSdkVersion rootProject.ext.android["targetSdkVersion"]
 		versionCode 8
 		versionName "3.00"
     }
@@ -51,11 +50,18 @@ android {
 dependencies {
 	api fileTree(dir: 'libs', include: ['*.jar'])
 
-	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-	implementation 'androidx.annotation:annotation:1.1.0'
+//    implementation(rootProject.ext.dependencies["commonLibVersion"]) {
+//        exclude module: 'support-v4'
+//    }
 
-	implementation("com.serenegiant:common:${commonLibVersion}") {
-		exclude module: 'support-v4'
-	}
+//    implementation ("com.serenegiant:common:2.12.4"){
+//        exclude module: 'support-v4'
+//    }
+
+    implementation(rootProject.ext.dependencies["commonLibVersion"]) {
+        exclude module: 'support-v4'
+    }
+
+    implementation project(path: ':usbCameraCommon')
     implementation project(path: ':libuvccamera')
 }

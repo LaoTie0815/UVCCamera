@@ -1,0 +1,154 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\dimens.xml",
+                    "from": {
+                        "startLines": "26,27,28",
+                        "startColumns": "1,1,1",
+                        "startOffsets": "1104,1160,1214",
+                        "endColumns": "54,52,39",
+                        "endOffsets": "1157,1211,1252"
+                    },
+                    "to": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,113,169",
+                        "endColumns": "57,55,42",
+                        "endOffsets": "108,164,207"
+                    }
+                },
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "30,39",
+                        "startColumns": "4,4",
+                        "startOffsets": "1212,1545",
+                        "endLines": "36,41",
+                        "endColumns": "12,12",
+                        "endOffsets": "1504,1702"
+                    },
+                    "to": {
+                        "startLines": "6,13",
+                        "startColumns": "4,4",
+                        "startOffsets": "264,555",
+                        "endLines": "12,15",
+                        "endColumns": "12,12",
+                        "endOffsets": "550,710"
+                    }
+                },
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "24",
+                        "startColumns": "4",
+                        "startOffsets": "1035",
+                        "endColumns": "51",
+                        "endOffsets": "1082"
+                    },
+                    "to": {
+                        "startLines": "5",
+                        "startColumns": "4",
+                        "startOffsets": "212",
+                        "endColumns": "51",
+                        "endOffsets": "259"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\res\\merged\\debug\\values-v14_values-v14.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values-v14\\styles.xml",
+                    "from": {
+                        "startLines": "30",
+                        "startColumns": "4",
+                        "startOffsets": "1207",
+                        "endLines": "32",
+                        "endColumns": "12",
+                        "endOffsets": "1355"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "201"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\res\\merged\\debug\\values-ja_values-ja.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values-ja\\strings.xml",
+                    "from": {
+                        "startLines": "24",
+                        "startColumns": "4",
+                        "startOffsets": "1035",
+                        "endColumns": "47",
+                        "endOffsets": "1078"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "47",
+                        "endOffsets": "98"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\res\\merged\\debug\\values-w820dp-v13_values-w820dp-v13.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values-w820dp\\dimens.xml",
+                    "from": {
+                        "startLines": "30,31,32,33",
+                        "startColumns": "4,1,1,1",
+                        "startOffsets": "1292,1348,1402,1443",
+                        "endColumns": "57,52,39,42",
+                        "endOffsets": "1345,1399,1440,1484"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,113,169,212",
+                        "endColumns": "57,55,42,45",
+                        "endOffsets": "108,164,207,253"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\res\\merged\\debug\\values-v11_values-v11.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values-v11\\styles.xml",
+                    "from": {
+                        "startLines": "29",
+                        "startColumns": "4",
+                        "startOffsets": "1163",
+                        "endLines": "31",
+                        "endColumns": "12",
+                        "endOffsets": "1297"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "187"
+                    }
+                }
+            ]
+        }
+    ]
+}

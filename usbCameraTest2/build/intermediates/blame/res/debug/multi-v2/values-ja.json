@@ -1,0 +1,26 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-ja\\values-ja.xml",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values-ja\\strings.xml",
+                    "from": {
+                        "startLines": "24",
+                        "startColumns": "4",
+                        "startOffsets": "1035",
+                        "endColumns": "47",
+                        "endOffsets": "1078"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "47",
+                        "endOffsets": "98"
+                    }
+                }
+            ]
+        }
+    ]
+}

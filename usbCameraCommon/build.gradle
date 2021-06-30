@@ -24,17 +24,16 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion versionCompiler
-   	buildToolsVersion versionBuildTool
+    compileSdkVersion rootProject.ext.android["compileSdkVersion"]
 
    	compileOptions {
-   		sourceCompatibility javaSourceCompatibility
-   		targetCompatibility javaTargetCompatibility
+   		sourceCompatibility rootProject.ext.java["javaSourceCompatibility"]
+   		targetCompatibility rootProject.ext.java["javaTargetCompatibility"]
    	}
 
     defaultConfig {
-        minSdkVersion minVersion
-        targetSdkVersion versionTarget
+        minSdkVersion rootProject.ext.android["minSdkVersion"]
+        targetSdkVersion rootProject.ext.android["targetSdkVersion"]
 
     }
     buildTypes {
@@ -51,8 +50,11 @@ dependencies {
 	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 	implementation 'androidx.annotation:annotation:1.1.0'
 
-	implementation("com.serenegiant:common:${commonLibVersion}") {
-   		exclude module: 'support-v4'
-   	}
-	implementation project(path: ':libuvccamera')
+    implementation(rootProject.ext.dependencies["commonLibVersion"]) {
+        exclude module: 'support-v4'
+    }
+    implementation project(path: ':libuvccamera')
+
+
+//	implementation project(path: ':libuvccamera')
 }

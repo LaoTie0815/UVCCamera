@@ -1,0 +1,62 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "map": [
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\dimens.xml",
+                    "from": {
+                        "startLines": "26,27,28",
+                        "startColumns": "1,1,1",
+                        "startOffsets": "1104,1160,1214",
+                        "endColumns": "54,52,39",
+                        "endOffsets": "1157,1211,1252"
+                    },
+                    "to": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,113,169",
+                        "endColumns": "57,55,42",
+                        "endOffsets": "108,164,207"
+                    }
+                },
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "30,39",
+                        "startColumns": "4,4",
+                        "startOffsets": "1212,1545",
+                        "endLines": "36,41",
+                        "endColumns": "12,12",
+                        "endOffsets": "1504,1702"
+                    },
+                    "to": {
+                        "startLines": "6,13",
+                        "startColumns": "4,4",
+                        "startOffsets": "264,555",
+                        "endLines": "12,15",
+                        "endColumns": "12,12",
+                        "endOffsets": "550,710"
+                    }
+                },
+                {
+                    "source": "D:\\LaoTie\\project\\LaoTie_github\\LaoTie_UvcCamera\\usbCameraTest2\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "24",
+                        "startColumns": "4",
+                        "startOffsets": "1035",
+                        "endColumns": "51",
+                        "endOffsets": "1082"
+                    },
+                    "to": {
+                        "startLines": "5",
+                        "startColumns": "4",
+                        "startOffsets": "212",
+                        "endColumns": "51",
+                        "endOffsets": "259"
+                    }
+                }
+            ]
+        }
+    ]
+}
