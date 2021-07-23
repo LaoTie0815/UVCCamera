@@ -1,3 +1,5 @@
+
+#include "utilbase.h"
 #include <jni.h>
 #include <string>
 #include <unistd.h>
@@ -8,7 +10,6 @@
 #include "libUVCCamera.h"
 #include "mid_exceptions.h"
 #include "mtc_log.h"
-#include "utilbase.h"
 
 /**
  * set the value into the long field
@@ -104,7 +105,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
             "Could not register registerNativeMethods methods",
             JNI_ERR);
 
-//    setVM(vm);
+    setVM(vm);
 
     return JNI_VERSION_1_6;
 }
@@ -125,7 +126,7 @@ static ID_TYPE nativeCreate(JNIEnv *env, jobject thiz) {
     //only for debug
 //    setVM(vm);
 
-    setJNIEnv(env);
+//    setJNIEnv(env);
     //only for debug
 
 

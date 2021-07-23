@@ -23,6 +23,7 @@
 
 package com.laotie.usbcameratest;
 
+import android.app.Activity;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.os.Bundle;
@@ -31,8 +32,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.laotie.usbcameratest.widget.SimpleUVCCameraTextureView;
 import com.laotie.uvccamera.CameraDialog;
@@ -43,7 +42,7 @@ import com.laotie.uvccamera.UVCCamera;
 
 import java.nio.ByteBuffer;
 
-public final class MainActivity extends AppCompatActivity implements CameraDialog.CameraDialogParent {
+public final class MainActivity extends Activity implements CameraDialog.CameraDialogParent {
 
     private final Object mSync = new Object();
     // for accessing USB and USB camera
